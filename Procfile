@@ -1,1 +1,1 @@
-web : gunicorn jeuxolympiques.wsgi
+web: gunicorn jeuxolympiques.wsgi
