@@ -9,5 +9,14 @@ def accueil(request):
 def evenement(request):
     return render(request, 'evenements.html')
 
+def panier(request):
+    return render(request, 'panier.html')
+
+def login(request):
+    return render(request, 'login.html')
+
+def register(request):
+    return render(request, 'register.html')
+
 
 # Create your views here.
