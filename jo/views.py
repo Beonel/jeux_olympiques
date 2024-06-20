@@ -1,11 +1,10 @@
-#from django.http import HttpResponse
+from django.http import HttpResponse
 
-#def jo(request):
-#    return HttpResponse("Hello, Heroku!")
-from django.shortcuts import render
+def jo(request):
+    return HttpResponse("Hello, Heroku!")
 
-def about(request):
-    return render(request, 'accueil.html')
+def accueil(request):
+    return HttpResponse("Bienvenue sur la page d'accueil")
 
 
 # Create your views here.
