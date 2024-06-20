@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.views import LoginView
 
 #def jo(request):
 #    return HttpResponse("Hello, Heroku!")
@@ -32,6 +33,10 @@ def connexion(request):
 
 def deconnexion(request):
     return render(request, 'deconnexion.html')
+
+#Vue pour la connexion personnalisée
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
 
 
 # Create your views here.
