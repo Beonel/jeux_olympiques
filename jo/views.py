@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
+from django.urls import reverse
 
 #def jo(request):
 #    return HttpResponse("Hello, Heroku!")
@@ -37,6 +39,10 @@ def deconnexion(request):
 #Vue pour la connexion personnalisée
 class CustomLoginView(LoginView):
     template_name = 'login.html'
+
+def custom_logout_view(request):
+    logout(request)
+    return redirect(reverse('login'))
 
 
 # Create your views here.

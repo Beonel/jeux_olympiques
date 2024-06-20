@@ -13,4 +13,5 @@ urlpatterns = [
     path('connexion/', CustomLoginView.as_view(), name='connexion'),
     path('deconnexion/', custom_logout_view, name='deconnexion'),
     path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', custom_logout_view, name='logout'),
 ]
