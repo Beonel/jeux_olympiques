@@ -1,40 +1,24 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout
+#myapp/views.py
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
+from django.shortcuts import render, redirect
+from .models import Offre, Sport, Evenement, Panier
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.urls import reverse
 
-#def jo(request):
-#    return HttpResponse("Hello, Heroku!")
-
-def accueil(request):
-    return render(request, 'accueil.html')
-
-def evenement(request):
-    return render(request, 'evenements.html')
-
-def panier(request):
-    return render(request, 'panier.html')
-
-def login(request):
-    return render(request, 'login.html')
-
+#Vue pour l'inscription
 def register(request):
-    return render(request, 'register.html')
-
-def ajouter_au_panier(request):
-    return render(request, 'ajouter_au_panier.html')
-
-def supprimer_du_panier(request):
-    return render(request, 'supprimer_du_panier.html')
-
-def inscription(request):
-    return render(request, 'inscription.html')
-
-def connexion(request):
-    return render(request, 'connexion.html')
-
-def deconnexion(request):
-    return render(request, 'deconnexion.html')
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('accueil')
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
 
 #Vue pour la connexion personnalisée
 class CustomLoginView(LoginView):
@@ -44,5 +28,33 @@ def custom_logout_view(request):
     logout(request)
     return redirect(reverse('login'))
 
+def accueil(request):
+    return render(request, 'accueil.html')
 
-# Create your views here.
+def evenement(request):
+    offres = Offre.objects.all()
+    sports = Sport.objects.all()
+    return render(request, 'evenements.html', {'offres': offres, 'sports': sports})
+# Autres vues
+@login_required
+def panier(request):
+    panier_items = Panier.objects.filter(user=request.user)
+    total = sum(item.offre.prix * item.quantite for item in panier_items)
+    return render(request, 'panier.html', {'panier_items': panier_items, 'total': total})
+
+@login_required
+def ajouter_au_panier(request, offre_id, evenement_id):
+    offre = Offre.objects.get(id=offre_id)
+    evenement = Evenement.objects.get(id=evenement_id)
+    panier_item, created = Panier.objects.get_or_create(user=request.user, offre=offre, evenement=evenement)
+    if not created:
+        panier_item.quantite += 1
+        panier_item.save()
+    return redirect('panier')
+
+@login_required
+def supprimer_du_panier(request, panier_item_id):
+    panier_item = Panier.objects.get(id=panier_item_id)
+    if panier_item.user == request.user:
+        panier_item.delete()
+    return redirect('panier')
