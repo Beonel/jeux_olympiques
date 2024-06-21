@@ -12,19 +12,21 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 import dj_database_url
+import dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+#Charger les variables d'environnement à partir du fichier .env
+dotenv.load_dotenv()
+
+# Récupération du chemin du projet
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f2a2-*(ot8fg*(gcnn)m9xhcps(tz&%&p*e!(y2&*t*&k8$utp'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Utiliser les variables d'environnement
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -79,10 +81,19 @@ WSGI_APPLICATION = 'jeuxolympiques.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('ak16ev9nu2nvj'),
+        'USER': os.getenv('dbjeuxolympiques'),
+        'PASSWORD': os.getenv('pb3cfff65d9b5bc485a15de18289dc93fdf9bdde59aff5c8b00ece970c0718028'),
+        'HOST': os.getenv('ec2-44-223-118-236.compute-1.amazonaws.com'),
+        'PORT': os.getenv('5432'),
+    }
 }
 
-
+#Configuration pour heroku
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
